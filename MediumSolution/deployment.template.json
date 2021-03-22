@@ -10,10 +10,10 @@
             "minDockerVersion": "v1.25",
             "loggingOptions": "",
             "registryCredentials": {
-              "iotedgecv": {
-                "username": "${CONTAINER_REGISTRY_USERNAME}",
-                "password": "${CONTAINER_REGISTRY_PASSWORD}",
-                "address": "${CONTAINER_REGISTRY_ADDRESS}"
+              "iotedgedevopsqxw": {
+                "username": "$CONTAINER_REGISTRY_USERNAME_iotedgedevopsqxw",
+                "password": "$CONTAINER_REGISTRY_PASSWORD_iotedgedevopsqxw",
+                "address": "iotedgedevopsqxw.azurecr.io"
               }
             }
           }
@@ -64,7 +64,17 @@
             "restartPolicy": "always",
             "settings": {
               "image": "${MODULES.medium_camera}",
-              "createOptions": "{\"HostConfig\":{\"Privileged\":true},\"Env\":[\"videosource=/dev/video0\",\"classifierapi=http://medium_classifier:80/image\"]}"
+              "createOptions": {}
+            }
+          },
+          "SimulatedTemperatureSensor": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.0",
+              "createOptions": {}
             }
           },
           "medium_classifier": {
@@ -85,6 +95,7 @@
         "schemaVersion": "1.0",
         "routes": {
           "medium_cameraToIoTHub": "FROM /messages/modules/medium_camera/outputs/* INTO $upstream",
+          "sensorTomedium_camera": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/medium_camera/inputs/input1\")",
           "medium_classifierToIoTHub": "FROM /messages/modules/medium_classifier/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
